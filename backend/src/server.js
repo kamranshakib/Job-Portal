@@ -1,5 +1,19 @@
 import express from 'express'
+import 'dotenv/config';
+import cors from 'cors'
+
+
+
+  
+
 const app = express()
-app.listen(3000,()=>{
-    console.log('server listen on port 3000')
-})
+const PORT = process.env.PORT
+
+ 
+
+
+
+
+app.listen(PORT,()=>{
+    console.log(`server listen on port ${PORT}`)
+})  
