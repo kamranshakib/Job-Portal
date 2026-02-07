@@ -2,9 +2,12 @@ import express from "express";
 import "dotenv/config";
 import cors from "cors";
 import path from "path";
+import { fileURLToPath } from "url";
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 import ConnectDB from "./config/db.js";
-// import authRoutes from "./routes/auth.Routes.js";
+import authRoutes from "./routes/auth.Routes.js";
 
 const app = express();
 
@@ -18,16 +21,15 @@ app.use(
 );
 
 // Connection database
-ConnectDB();
-
+ConnectDB()
 // Middleware
 app.use(express.json());
 
 // Routes
-// app.use("/api/auth/", authRoutes);
+app.use("/api/auth/", authRoutes);
 
 // Server uploads folder
-app.use("/uploads", express.static(path.json(__dirname, "upload"), {}));
+app.use("/uploads", express.static(path.join(__dirname, "upload"), {}));
 
 // Start Server
 const PORT = process.env.PORT;
