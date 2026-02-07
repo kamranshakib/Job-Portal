@@ -35,12 +35,14 @@ const UserSchema = new mongoose.Schema(
 );
 
 // Enctypy password before save
-UserSchema.pre("save", async function (next) {
-  if (!this.isModified("password")) {
-    return next();
+UserSchema.pre("save", async function () {
+  try {
+    if (!this.isModified("password")) return;
+
+    this.password = await bcrypt.hash(this.password, 10);
+  } catch (error) {
+    throw new Error("Password hashing failed");
   }
-  this.password = await bcrypt.hash(this.password, 10);
-  next();
 });
 
 // compare password
