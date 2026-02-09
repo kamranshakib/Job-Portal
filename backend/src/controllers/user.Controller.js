@@ -1,6 +1,6 @@
 import fs from "fs";
 import path from "path";
-import User from "../models/User.js";
+import { User } from "../models/User.js";
 
 // update user profile (name, avatat , company datails)
 export const updateProfile = async (req, res) => {
