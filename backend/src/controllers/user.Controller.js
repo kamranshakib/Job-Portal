@@ -46,6 +46,28 @@ export const updateProfile = async (req, res) => {
 // delete resume file jush jobseeker
 export const deleteResume = async (req, res) => {
   try {
+    const { resumeUrl } = req.body;
+
+    const fileName = resumeUrl?.split("/")?.pop();
+    const user = await User.findById(req.user._id);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    if (user.role !== "jobseeker") {
+      return res
+        .status(400)
+        .json({ message: "Only jobseeker can delete resume" });
+    }
+
+    const filePath = path.join(__dirname, "../uploads", fileName);
+
+    // cheak if the file exists and then delete
+    if (fs.existsSync(filePath)) {
+      fs.unlinkSync(filePath); //delete the file
+    }
+    user.resume = "";
+    await user.save();
+    res.json({ message: "Resume deleted successfully" });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
