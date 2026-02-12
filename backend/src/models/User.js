@@ -29,7 +29,7 @@ const UserSchema = new mongoose.Schema(
     //for employer
     companyName: String,
     companyLogo: String,
-    companyDedcription: String,
+    companyDescription: String,
   },
   { timestamps: true },
 );
