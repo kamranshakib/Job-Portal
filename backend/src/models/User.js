@@ -50,4 +50,5 @@ UserSchema.methods.MathPassword = function (condedatePassword) {
   return bcrypt.compare(condedatePassword, this.password);
 };
 
-export const User = mongoose.model("User", UserSchema);
+const User = mongoose.model("User", UserSchema);
+export default User;

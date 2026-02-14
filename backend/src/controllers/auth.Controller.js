@@ -1,10 +1,10 @@
 import jwt from "jsonwebtoken";
-import { User } from "../models/User.js";
-
+import User from "../models/User.js";
+ 
 const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: "60d" });
 };
-
+ 
 export const register = async (req, res) => {
   try {
     const { email, name, password, avatar, role } = req.body;
@@ -17,7 +17,7 @@ export const register = async (req, res) => {
       return res.status(400).json({ message: "email already exist" });
     }
     const user = await User.create({
-      email, 
+      email,
       name,
       password,
       role,

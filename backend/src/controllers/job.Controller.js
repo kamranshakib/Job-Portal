@@ -1,12 +1,12 @@
 import Job from "../models/Job.js";
 import User from "../models/User.js";
 import Application from "../models/Application.js";
-import SavedJob, { SavedJob } from "../models/SavedJob.js";
+import SavedJob from "../models/SavedJob.js";
 
 // @desk  create a new job (Only Employer)
 export const createJob = async (req, res) => {
   try {
-    if (req.user.role !== "Employer") {
+    if (req.user.role !== "employer") {
       res.status(403).json({ message: "Only Employer can post jobs" });
     }
     const job = await Job.create({ ...req.body, company: req.user._id });
@@ -68,9 +68,26 @@ export const getJobs = async (req, res) => {
       //saved job
       const savedJob = await SavedJob.find({ jobseeker: userId }).select("job");
       savedJobIds = savedJob.map((s) => String(s.job));
+
+      //Application
+      const application = await Application.find({ applicant: userId }).select(
+        "job status",
+      );
+      application.forEach((element) => {
+        appliedJobStatusMap[String(element.job)] = element.status;
+      });
     }
+
+    const jobsWithExtras = jobs.map((job) => {
+      const jobIdStr = String(job._id);
+      return {
+        ...job.toObject(),
+        isSaved: savedJobIds.includes(jobIdStr),
+        applicationStatus: appliedJobStatusMap[jobIdStr] || null,
+      };
+    });
+    res.json(jobsWithExtras);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
-111;
