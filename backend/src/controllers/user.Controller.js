@@ -1,5 +1,5 @@
 import fs from "fs";
-import { User } from "../models/User.js";
+import User from "../models/User.js";
 import path from "path";
 import { fileURLToPath } from "url";
 
