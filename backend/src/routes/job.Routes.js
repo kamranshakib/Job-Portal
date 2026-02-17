@@ -3,6 +3,8 @@ import { protect } from "../middlewares/auth.Middleware.js";
 import {
   createJob,
   getJobs,
+  getJobEmployer,
+
   // getJobId,
   // updateJob,
   // toggleCloseJob,
@@ -10,7 +12,7 @@ import {
 const router = express.Router();
 
 router.route("/").post(protect, createJob).get(getJobs);
-// router.route("/get-jobs-employer").get(protect, getJobEmployer);
+router.route("/get-jobs-employer").get(protect, getJobEmployer);
 router.route("/:id");
 // .get(getJobId)
 // .put(protect, updateJob)
@@ -18,4 +20,3 @@ router.route("/:id");
 // router.put("/:id/toggle-closed", protect, toggleCloseJob);
 
 export default router;
- 
