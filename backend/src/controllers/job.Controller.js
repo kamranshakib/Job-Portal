@@ -122,3 +122,36 @@ export const getJobEmployer = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+export const getJobById = async (req, res) => {
+  try {
+    const { userId } = req.query;
+    const id = req.params.id;
+
+    const job = await Job.findById(id).populate(
+      "company",
+      "name companyNmae companyLogo ",
+    );
+    if (!job) {
+      return res.status(404).json({ message: "job not found" });
+    }
+    let applicatonStatus = null;
+    if (userId) {
+      const application = await Application.findOne({
+        job: job._id,
+        applicant: userId,
+      }).select("status");
+
+      if (application) {
+        applicatonStatus = application.status;
+      }
+    }
+
+    res.json({
+      ...job.toObject(),
+      applicatonStatus,
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
