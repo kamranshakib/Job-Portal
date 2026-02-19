@@ -155,3 +155,19 @@ export const getJobById = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+export const updateJob = async (req, res) => {
+  try {
+    const job = await Job.findById(req.params.id);
+    if (!job) return res.status(404).json({ message: "job not found" });
+    if (job.company.toString() !== req.user._id.toString()) {
+      res.status(403).json({ message: "Not Authorized to update thie job" });
+    }
+
+    Object.assign(job, req.body);
+    const updated = await job.save();
+    res.json(updated);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
