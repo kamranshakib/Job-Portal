@@ -122,3 +122,69 @@ export const getJobEmployer = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+export const getJobById = async (req, res) => {
+  try {
+    const { userId } = req.query;
+    const id = req.params.id;
+
+    const job = await Job.findById(id).populate(
+      "company",
+      "name companyNmae companyLogo ",
+    );
+    if (!job) {
+      return res.status(404).json({ message: "job not found" });
+    }
+    let applicatonStatus = null;
+    if (userId) {
+      const application = await Application.findOne({
+        job: job._id,
+        applicant: userId,
+      }).select("status");
+
+      if (application) {
+        applicatonStatus = application.status;
+      }
+    }
+
+    res.json({
+      ...job.toObject(),
+      applicatonStatus,
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export const updateJob = async (req, res) => {
+  try {
+    const job = await Job.findById(req.params.id);
+    if (!job) return res.status(404).json({ message: "job not found" });
+    if (job.company.toString() !== req.user._id.toString()) {
+      res.status(403).json({ message: "Not Authorized to update thie job" });
+    }
+
+    Object.assign(job, req.body);
+    const updated = await job.save();
+    res.json(updated);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export const deleteJob = async (req, res) => {
+  try {
+    const job = await Job.findById(req.params.id);
+    if (!job) return res.status(404).json({ message: "Job Not Found" });
+
+    if (job.company.toString() !== req.user._id.toString()) {
+      return res
+        .status(403)
+        .json({ message: "Not Authorized to Delte This Job" });
+    }
+    await job.deleteOne();
+    res.json({ message: "job deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
