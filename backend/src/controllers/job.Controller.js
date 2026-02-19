@@ -171,3 +171,20 @@ export const updateJob = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+export const deleteJob = async (req, res) => {
+  try {
+    const job = await Job.findById(req.params.id);
+    if (!job) return res.status(404).json({ message: "Job Not Found" });
+
+    if (job.company.toString() !== req.user._id.toString()) {
+      return res
+        .status(403)
+        .json({ message: "Not Authorized to Delte This Job" });
+    }
+    await job.deleteOne();
+    res.json({ message: "job deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
